@@ -10,10 +10,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_30_170637) do
+ActiveRecord::Schema.define(version: 2019_12_01_005530) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "followings", force: :cascade do |t|
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.integer "user_id"
+    t.integer "follower_id"
+    t.index ["follower_id"], name: "index_followings_on_follower_id"
+    t.index ["user_id", "follower_id"], name: "index_followings_on_user_id_and_follower_id", unique: true
+    t.index ["user_id"], name: "index_followings_on_user_id"
+  end
 
   create_table "sleep_clocks", force: :cascade do |t|
     t.datetime "created_at", precision: 6, null: false
