@@ -5,6 +5,10 @@ class SleepClocksController < ApplicationController
     @sleep_clocks = current_user.sleep_clocks.order(created_at: :desc)
   end
 
+  def friends
+    @sleep_clocks = SleepClock.where(user: current_user.followers).in_past_week.ordered_by_sleep_length_desc
+  end
+
   def show
   end
 
