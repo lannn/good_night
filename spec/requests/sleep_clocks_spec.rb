@@ -21,17 +21,18 @@ RSpec.describe "SleepClocks API", type: :request do
     let!(:beginning_of_past_week) { 1.week.ago.beginning_of_week }
     let!(:end_of_past_week) { 1.week.ago.end_of_week }
     let!(:invalid_sleep_clock_1) { create(:sleep_clock, user: following.follower, bedtime: beginning_of_past_week - 1.hours, wakeup: beginning_of_past_week + 7.hours) }
-    let!(:invalid_sleep_clock_2) { create(:sleep_clock, user: following.follower, bedtime: end_of_past_week - 1.hours, wakeup: end_of_past_week + 7.hours) }
     let!(:sleep_clock_1) { create(:sleep_clock, user: following.follower, bedtime: beginning_of_past_week + 23.hours, wakeup: beginning_of_past_week + 31.hours) }
     let!(:sleep_clock_2) { create(:sleep_clock, user: following.follower, bedtime: beginning_of_past_week + 1.day + 23.hours, wakeup: beginning_of_past_week + 1.day + 32.hours) }
+    let!(:sleep_clock_3) { create(:sleep_clock, user: following.follower, bedtime: end_of_past_week - 1.hours, wakeup: end_of_past_week + 7.hours) }
     let!(:user_sleep_clock) { create(:sleep_clock, user: user, bedtime: beginning_of_past_week + 23.hours, wakeup: beginning_of_past_week + 31.hours) }
 
     it "returns sleep clocks over the past week for their friends and ordered by the length of their sleep desc" do
       get "/sleep_clocks/friends", headers: { "Authorization" => credentials }
       sleep_clock_ids = json.map { |e| e["id"] }
-      expect(sleep_clock_ids).to include(sleep_clock_1.id, sleep_clock_2.id)
-      expect(sleep_clock_ids.size).to eq(2)
+      expect(sleep_clock_ids.size).to eq(3)
+      expect(sleep_clock_ids).to include(sleep_clock_1.id, sleep_clock_2.id, sleep_clock_3.id)
       expect(sleep_clock_ids.first).to eq(sleep_clock_2.id)
+      expect(sleep_clock_ids.second).to eq(sleep_clock_3.id)
       expect(sleep_clock_ids.last).to eq(sleep_clock_1.id)
     end
   end
@@ -96,7 +97,7 @@ RSpec.describe "SleepClocks API", type: :request do
       it "returns a validation error" do
         put "/sleep_clocks/#{sleep_clock.id}", params: invalid_params, headers: { "Authorization" => credentials }
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(json["errors"]).to include("Wakeup can't be less than bedtime")
+        expect(json["errors"]).to include("Wakeup must greater than bedtime")
       end
     end
   end

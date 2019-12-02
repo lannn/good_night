@@ -17,7 +17,7 @@ RSpec.describe SleepClock, type: :model do
       let(:sleep_clock) { build(:sleep_clock, bedtime: DateTime.current, wakeup: 2.hours.ago) }
       it "returns errors" do
         sleep_clock.valid?
-        expect(sleep_clock.errors.full_messages).to include("Wakeup can't be less than bedtime")
+        expect(sleep_clock.errors.full_messages).to include("Wakeup must greater than bedtime")
       end
     end
   end
@@ -26,14 +26,14 @@ RSpec.describe SleepClock, type: :model do
     let!(:beginning_of_past_week) { 1.week.ago.beginning_of_week }
     let!(:end_of_past_week) { 1.week.ago.end_of_week }
     let!(:invalid_sleep_clock_1) { create(:sleep_clock, bedtime: beginning_of_past_week - 1.hours, wakeup: beginning_of_past_week + 7.hours) }
-    let!(:invalid_sleep_clock_2) { create(:sleep_clock, bedtime: end_of_past_week - 1.hours, wakeup: end_of_past_week + 7.hours) }
     let!(:sleep_clock_1) { create(:sleep_clock, bedtime: beginning_of_past_week + 23.hours, wakeup: beginning_of_past_week + 31.hours) }
     let!(:sleep_clock_2) { create(:sleep_clock, bedtime: beginning_of_past_week + 1.day + 23.hours, wakeup: beginning_of_past_week + 1.day + 32.hours) }
+    let!(:sleep_clock_3) { create(:sleep_clock, bedtime: end_of_past_week - 1.hours, wakeup: end_of_past_week + 7.hours) }
 
     it "returns the sleep clocks in the past week" do
       sleep_clock_ids = SleepClock.in_past_week.pluck(:id)
-      expect(sleep_clock_ids).to include(sleep_clock_1.id, sleep_clock_2.id)
-      expect(sleep_clock_ids.size).to eq(2)
+      expect(sleep_clock_ids.size).to eq(3)
+      expect(sleep_clock_ids).to include(sleep_clock_1.id, sleep_clock_2.id, sleep_clock_3.id)
     end
   end
 
