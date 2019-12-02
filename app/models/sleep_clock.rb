@@ -10,8 +10,8 @@ class SleepClock < ApplicationRecord
   private
 
   def wakeup_greater_than_bedtime
-    if wakeup && wakeup < bedtime
-      errors.add(:wakeup, "can't be less than bedtime")
+    if wakeup && wakeup <= bedtime
+      errors.add(:wakeup, "must greater than bedtime")
     end
   end
 end

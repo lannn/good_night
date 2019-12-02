@@ -17,7 +17,7 @@ RSpec.describe SleepClock, type: :model do
       let(:sleep_clock) { build(:sleep_clock, bedtime: DateTime.current, wakeup: 2.hours.ago) }
       it "returns errors" do
         sleep_clock.valid?
-        expect(sleep_clock.errors.full_messages).to include("Wakeup can't be less than bedtime")
+        expect(sleep_clock.errors.full_messages).to include("Wakeup must greater than bedtime")
       end
     end
   end

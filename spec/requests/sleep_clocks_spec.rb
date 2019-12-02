@@ -97,7 +97,7 @@ RSpec.describe "SleepClocks API", type: :request do
       it "returns a validation error" do
         put "/sleep_clocks/#{sleep_clock.id}", params: invalid_params, headers: { "Authorization" => credentials }
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(json["errors"]).to include("Wakeup can't be less than bedtime")
+        expect(json["errors"]).to include("Wakeup must greater than bedtime")
       end
     end
   end
